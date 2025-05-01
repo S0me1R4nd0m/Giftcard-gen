@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gift Card Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+    }
+    label, select, input, button {
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+    }
+    pre {
+      background: #eee;
+      padding: 10px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Gift Card Generator & Checker</h2>
+
+    <label for="card_type">Select Card Type:</label>
+    <select id="card_type">
+      <option>Amazon</option>
+      <option>Xbox</option>
+      <option>PayPal</option>
+      <option>Roblox</option>
+      <option>Fortnite</option>
+      <option>Steam</option>
+      <option>iTunes</option>
+      <option>GooglePlay</option>
+    </select>
+
+    <label for="quantity">Quantity (for generation):</label>
+    <input type="number" id="quantity" value="1" min="1">
+
+    <button onclick="generateCodes()">Generate</button>
+
+    <label for="check_code">Check/Redeem Code:</label>
+    <input type="text" id="check_code" placeholder="Enter code to check or redeem">
+
+    <button onclick="checkCode()">Check Code</button>
+    <button onclick="redeemCode()">Redeem Code</button>
+
+    <h3>Response:</h3>
+    <pre id="response"></pre>
+  </div>
+
+  <script>
+    const API_URL = "http://localhost:5000"; // Change to your backend URL if deployed
+
+    async function generateCodes() {
+      const cardType = document.getElementById("card_type").value;
+      const quantity = document.getElementById("quantity").value;
+      const res = await fetch(`${API_URL}/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ card_type: cardType, quantity })
+      });
+      const data = await res.json();
+      document.getElementById("response").textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function checkCode() {
+      const cardType = document.getElementById("card_type").value;
+      const code = document.getElementById("check_code").value;
+      const res = await fetch(`${API_URL}/check`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ card_type: cardType, code })
+      });
+      const data = await res.json();
+      document.getElementById("response").textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function redeemCode() {
+      const cardType = document.getElementById("card_type").value;
+      const code = document.getElementById("check_code").value;
+      const res = await fetch(`${API_URL}/redeem`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ card_type: cardType, code })
+      });
+      const data = await res.json();
+      document.getElementById("response").textContent = JSON.stringify(data, null, 2);
+    }
+  </script>
+</body>
+</html>
